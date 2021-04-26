@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Thermal Camera UI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type=text/javascript>
+// function to tie snapshot button to snapshot function (on click)
+  $(function() {
+	$('a#snapshot').bind('click', function() {
+	  $.getJSON('/snapshot_button',
+	  function(data) {
+	  });
+	return false;
+    });
+  });
+  
+  function startRecord() {
+	// start recording on click, 
+	// and set the next click to stop recording.
+	$.getJSON('/start_record',
+	  function(data) {
+	});
+	$(this).one("click", stopRecord);
+
+	// update the status div for start recording,
+	// update start stop button text
+	// and after 1 second update status again for recording in progress.
+	$('#feedback').html( 'BEGIN RECORDING' ); 
+	update_start_stop_button_text();
+	setTimeout(() => {  $('#feedback').html( 'RECORDING...' ); }, 1000);
+  }
+
+  function stopRecord() {
+	// stop recording on click,
+	// and set the next click to start recording
+	$.getJSON('/stop_record',
+	  function(data) {
+	});
+	$(this).one("click", startRecord);
+
+	// update more status text,
+	// and update start_stop button text
+	$('#feedback').html( 'END RECORDING' );
+	update_start_stop_button_text();
+	setTimeout(() => {  $('#feedback').html( '' ); }, 2000); 
+  }
+  
+  // Finally we kick off this toggle madness with a start record when first clicked
+  $(function() {
+		$('a#start_stop').one('click', startRecord);
+  });      
+
+  // function for snapshot button to update status div with text,
+  // after two seconds, the status text clears
+  $(function() { 
+	$( '#snapshot' ).on( 'click', function() { 
+	  $('#feedbackIMG').html( 'SNAPSHOT TAKEN' ); 
+	  setTimeout(() => {  $('#feedbackIMG').html( '' ); }, 2000); 
+	}); 
+  });
+
+  // swap between button labels to indicate what the next push of the button will do
+  function update_start_stop_button_text() {
+	var button = document.getElementById("btn");
+	if (button.value == "Record") {
+	  button.innerHTML = '<img class=imgOnBtn src="{{url_for('static', filename='stop1.png')}}" alt="Stop" width="50" height="50" />';
+	  button.value = 'Stop';
+	} else {
+	  button.innerHTML = '<img class=imgOnBtn src="{{url_for('static', filename='vid1.png')}}" alt="Record" width="50" height="50" />';
+	  button.value = 'Record';
+	}
+  } 
+
+</script>
+<style>
+body {
+  background-color:#202020 ;
+  font-family: "Lato", sans-serif;
+}
+
+h1,th {
+  color: white;
+}
+
+span {
+  color: #D0D0D0;
+}
+
+#feedback {
+  color: white;
+}
+#feedbackIMG {
+  color: green;
+}
+.btn {
+  background-color: #E7E7E7;
+  border-radius: 20%;
+  border: none;
+  opacity: 0.6;
+  transition: 0.3s;
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.btn:hover {opacity: 1}
+
+.stream, {
+  width: 100%;
+}
+
+.myImages  {
+  width: 100%;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.allimg:hover {
+  opactity: 0.7;
+}
+.gallery {
+  width: 100%;
+}
+.left {
+  float: left;
+  width: 80%;}
+
+.right {
+  float:left;
+  width: 20%;}
+  
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+#center {
+  transition: margin-left .5s;
+  padding: 16px;
+  text-align: center;
+  overflow-x: hidden;
+}
+<!-- 
+-->
+#myImg {
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#myImg:hover {
+  opacity: 0.7;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.modal-content {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+}
+
+#caption {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+  color: #ccc;
+  padding: 10px 0;
+  height: 150px;
+}
+
+.modal-content,
+#caption {
+  animation-name: zoom;
+  animation-duration: 0.6s;
+}
+
+@keyframes zoom {
+  from {
+    transform: scale(0)
+  }
+  to {
+    transform: scale(1)
+  }
+}
+
+.close {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 700px) {
+  .left {
+    all: unset}
+
+  .right {
+    all: unset}
+	
+  .modal-content {
+    width: 100%;
+  }
+}
+<!-- 
+-->
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+@media screen and (max-width: 900px){
+  .centered {
+    text-align: center;
+    overflow-x: visible;}
+  
+  .left {
+    all: unset}
+
+  .right {
+    all: unset}
+
+}
+</style>
+</head>
+
+<body>
+
+<div id="mySidenav" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+  
+  <table id="allimg">
+	<th>Images</th>
+  </table>
+  <br>
+   <!--
+  <table id="allvid">
+    <th>Videos</th>
+  </table>
+  -->
+</div>
+
+  <div class='split left'>
+  <div id="center">
+    <h1>Thermal Camera Feed</h1>
+	
+    <!--
+	<img id=stream class="stream" src="{{ url_for('video_feed') }}">
+	-->
+	
+	<video width="50%" controls autoplay loop>
+	  <source src="{{url_for('static', filename='videos/samplevideo.mp4')}}" type="video/mp4">
+	</video>
+	<div id="myModal" class="modal">
+	  <span class="close">&times;</span>
+	  <img class="modal-content" id="img01">
+	  <div id="caption"></div>
+	</div>
+	
+  </div>
+  </div>
+  
+  <div class='split right'>
+  <div id="center">
+    <h2></h2>
+	<br><br><br>
+	<span style="font-size:25px;cursor:pointer" onclick="openNav()">&#9776; View Gallery</span>
+	<br><br><br><br>
+    <form>
+  	  <a href=# id=snapshot><button class='btn btn-default' type='button' title="Snapshot"><img class=imgOnBtn src="{{url_for('static', filename='snap.png')}}" alt="Snapshot" width="50" height="50" /></button></a>
+      <br><br>
+	  <a href=# id=start_stop><button class='btn btn-default' id="btn" type='button' value='Record' title="Record" onclick="update_start_stop_button_text"><img class=imgOnBtn src="{{url_for('static', filename='vid1.png')}}" alt="Record" width="50" height="50" /></button></a>
+	  <br><br>
+	  <div id=feedback></div>
+	  <div id=feedbackIMG></div>
+    </form>
+  </div>
+  </div>
+
+<script>
+function openNav() {
+  document.getElementById("mySidenav").style.width = "30%";
+  
+  var imgtable = document.getElementById("allimg");
+  
+  var ctr = 1;
+  var imgpath = "static/images/image_";
+  var imgfooter = ".jpg";
+  
+  while(true){
+    var tr = document.createElement('tr');
+	var img = document.createElement('IMG');
+	img.src = imgpath + ctr.toString() + imgfooter;
+	ctr = ctr + 1
+	if (!doesExist(img.src)){
+	  break;
+	}
+	
+	img.setAttribute('class','myImages');
+	img.setAttribute('id','myimg');
+	img.setAttribute('title',img.src);
+	tr.appendChild(img);
+	imgtable.appendChild(tr);
+  }
+  
+  // Create modal image
+  var modal = document.getElementById("myModal");
+
+// Get the image and insert it inside the modal - use its "alt" text as a caption
+  var images = document.getElementsByClassName("myImages");
+  var modalImg = document.getElementById("img01");
+
+  for (var i = 0; i < images.length; i++) {
+    var img = images[i];
+  // and attach our click listener for this image.
+    img.onclick = function(evt) {
+      modal.style.display = "block";
+      modalImg.src = this.src;
+      captionText.innerHTML = this.alt;
+    }
+  }
+
+// Get the <span> element that closes the modal
+  var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+  span.onclick = function() { 
+    modal.style.display = "none";
+  }
+/*
+  var vidtable = document.getElementById("allvid");
+  
+  var ctr = 1;
+  var vidpath = "static/videos/vid_";
+  var vidfooter = ".mp4";
+  
+  while(true){
+    var tr = document.createElement('tr');
+	var vid = document.createElement('VIDEO');
+	vid.src = vidpath + ctr.toString() + vidfooter;
+	ctr = ctr + 1
+	if (!doesExist(vid.src)){
+	  break;
+	}
+	
+	vid.setAttribute('class','allimg');
+	vid.setAttribute('title',vid.src);
+	tr.appendChild(vid);
+	vidtable.appendChild(tr);
+  }
+
+*/
+//OpenCV: FFMPEG: tag 0x5634504d/'MP4V' is not supported with codec id 12 and format 'mp4 / MP4 (MPEG-4 Part 14)'
+//OpenCV: FFMPEG: fallback to use tag 0x7634706d/'mp4v'
+
+}
+
+function doesExist(url){
+  var http = new XMLHttpRequest();
+  http.open('HEAD', url, false);
+  http.send();
+  
+  return http.status != 404;
+}
+
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+}
+
+</script>
+   
+</body>
+</html> 
