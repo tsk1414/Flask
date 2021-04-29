@@ -3,8 +3,8 @@
 This application uses Flask to render a HTML page for users to observe a drone's view as it detects other UAVs. Our team trained a Machine Learning Algorithm with a large collection of thermal pictures of drones. The web pages offers functions such as saving an image from the command drone's camera, saving a video clip from the drone's camera, and ability to view said images and videos.
 
 ---
-Required dependencies: Flask, NumPy, OpenCV, Imutils
-How to download the dependencies: All dependencies can be installed via the command line using the pip command.
+Required dependencies: Flask, NumPy, OpenCV, Imutils.
+All dependencies can be installed via the command line using the pip command:
 	
 	pip install (flask | numpy | opencv-python | imutils)
 	
