@@ -1,9 +1,9 @@
-Thermal Camera Based Real Time Automated UAV Detection
+# Thermal Camera Based Real Time Automated UAV Detection
 
 This application uses Flask to render a HTML page for users to observe a drone's view as it detects other UAVs. Our team trained a Machine Learning Algorithm with a large collection of thermal pictures of drones. The web pages offers functions such as saving an image from the command drone's camera, saving a video clip from the drone's camera, and ability to view said images and videos.
 
 
-
+---
 
 Required dependencies: Flask, NumPy, OpenCV, Imutils
 How to download the dependencies: All dependencies can be installed via the command line using the pip command.
@@ -13,7 +13,7 @@ How to download the dependencies: All dependencies can be installed via the comm
 Flask: Utilized for its easy integration into HTML webpages, more specifically, we used the flask library to integrate the video feed into the frontend webpage.
 
 OpenCV, NumPy, Imutils: These three libraries were used in conjunction for a variety of tasks: Creating video feed to send to frontend, recording the video being retrieved from the drone, taking snapshots of the video feed, reshaping and manipulating image and video sizes. 
-
+---
 Integrating Flask into Frontend
 Flask operates by declaring an API of server-side ‘routes’ that clients can visit to activate functions.
 
